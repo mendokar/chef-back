@@ -18,7 +18,7 @@ describe('Testing para el API clientes:', () => {
     chai.request(app)
       .post('/api/v1/crearCliente')
       .set('Accept', 'application/json')
-      .send(book)
+      .send(cliente)
       .end((err, res) => {
         expect(res.status).to.equal(201);
         expect(res.body.data).to.include({
@@ -81,7 +81,7 @@ describe('Testing para el API clientes:', () => {
   it('Consultar un cliente con id_cliente invalido', (done) => {
     const id_cliente = 8888;
     chai.request(app)
-      .get(`/api/v1/books/${id_cliente}`)
+      .get(`/api/v1/consultarCliente/${id_cliente}`)
       .set('Accept', 'application/json')
       .end((err, res) => {
         expect(res.status).to.equal(404);
@@ -94,7 +94,7 @@ describe('Testing para el API clientes:', () => {
   it('Consultar un cliente con tipo de dato diferente a numero entero', (done) => {
     const id_cliente = 'aaa';
     chai.request(app)
-      .get(`/api/v1/books/${id_cliente}`)
+      .get(`/api/v1/consultarCliente/${id_cliente}`)
       .set('Accept', 'application/json')
       .end((err, res) => {
         expect(res.status).to.equal(400);
@@ -114,7 +114,7 @@ describe('Testing para el API clientes:', () => {
       estrato:9
     };
     chai.request(app)
-      .put(`/api/v1/books/${bookId}`)
+      .put(`/api/v1/actualizarCliente/${id_cliente}`)
       .set('Accept', 'application/json')
       .send(actualizarCliente)
       .end((err, res) => {
@@ -131,48 +131,50 @@ describe('Testing para el API clientes:', () => {
   it('Actualizar cliente con id Invalido', (done) => {
     const id_cliente = '9999';
     const actualizarCliente = {
-      id: bookId,
-      title: 'Updated Awesome book again',
-      price: '$11.99',
-      description: 'We have updated the price'
+      id_cliente:id_cliente,
+      nombres: 'Oscar Javier Mendoza Ruiz Actualizados',
+      direccion_facturacion: 'Calle 123 Actualizados',
+      direccion_correspondencia: 'Calle falsa 123 Actualizados',
+      estrato:9
     };
     chai.request(app)
-      .put(`/api/v1/books/${bookId}`)
+      .put(`/api/v1/actualizarCliente/${id_cliente}`)
       .set('Accept', 'application/json')
       .send(actualizarCliente)
       .end((err, res) => {
         expect(res.status).to.equal(404);
         res.body.should.have.property('message')
-                            .eql(`Cannot find book with the id: ${bookId}`);
+                            .eql(`No se pudo encontrar el cliente ID: ${id_cliente}`);
         done();
       });
   });
 
-  it('It should not update a book with non-numeric id value', (done) => {
-    const bookId = 'ggg';
-    const updatedBook = {
-      id: bookId,
-      title: 'Updated Awesome book again',
-      price: '$11.99',
-      description: 'We have updated the price'
+  it('Actualizar cliente con un id no numerico', (done) => {
+    const id_cliente = 'ggg';
+    const actualizarCliente = {
+        id_cliente:id_cliente,
+        nombres: 'Oscar Javier Mendoza Ruiz Actualizados',
+        direccion_facturacion: 'Calle 123 Actualizados',
+        direccion_correspondencia: 'Calle falsa 123 Actualizados',
+        estrato:9
     };
     chai.request(app)
-      .put(`/api/v1/books/${bookId}`)
+      .put(`/api/v1/actualizarCliente/${id_cliente}`)
       .set('Accept', 'application/json')
-      .send(updatedBook)
+      .send(actualizarCliente)
       .end((err, res) => {
         expect(res.status).to.equal(400);
         res.body.should.have.property('message')
-                            .eql('Please input a valid numeric value');
+                            .eql('Por favor ingrese un valor numerico valido');
         done();
       });
   });
 
 
-  it('It should delete a book', (done) => {
-    const bookId = 1;
+  it('Eliminar un cliente', (done) => {
+    const id_cliente = 1;
     chai.request(app)
-      .delete(`/api/v1/books/${bookId}`)
+      .delete(`/api/v1/eliminarCliente/${id_cliente}`)
       .set('Accept', 'application/json')
       .end((err, res) => {
         expect(res.status).to.equal(200);
@@ -181,27 +183,27 @@ describe('Testing para el API clientes:', () => {
       });
   });
 
-  it('It should not delete a book with invalid id', (done) => {
-    const bookId = 777;
+  it('Eliminar un cliente con id invalido', (done) => {
+    const id_cliente = 777;
     chai.request(app)
-      .delete(`/api/v1/books/${bookId}`)
+      .delete(`/api/v1/eliminarCliente/${id_cliente}`)
       .set('Accept', 'application/json')
       .end((err, res) => {
         expect(res.status).to.equal(404);
         res.body.should.have.property('message')
-                            .eql(`Book with the id ${bookId} cannot be found`);
+                            .eql(`Cliente con el Id ${id_cliente} no se encuentra`);
         done();
       });
   });
 
-  it('It should not delete a book with non-numeric id', (done) => {
-    const bookId = 'bbb';
+  it('Eliminar un cliente con un valor id_cliente no numerico', (done) => {
+    const id_cliente = 'bbb';
     chai.request(app)
-      .delete(`/api/v1/books/${bookId}`)
+      .delete(`/api/v1/eliminarCliente/${id_cliente}`)
       .set('Accept', 'application/json')
       .end((err, res) => {
         expect(res.status).to.equal(400);
-        res.body.should.have.property('message').eql('Please provide a numeric value');
+        res.body.should.have.property('message').eql('Por favor ingrese un valor numerico');
         done();
       });
   });
